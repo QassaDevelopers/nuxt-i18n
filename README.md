@@ -29,6 +29,8 @@
 </a>
 </p>
 
+Forked from nuxt-community/nuxt-i18n/
+
 ## Development
 
 - Fork the project and clone it in your existing Nuxt project:
