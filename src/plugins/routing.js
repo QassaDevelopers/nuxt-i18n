@@ -78,8 +78,6 @@ function localeRegionPathFactory (i18nPath, routerPath, storePath) {
     const resolved = router.resolve(localizedRoute)
     let { href } = resolved
 
-    // href = href.replace('fr', route.params.region)
-
     // Remove baseUrl from href (will be added back by nuxt-link)
     if (router.options.base) {
       const regexp = new RegExp(router.options.base)
