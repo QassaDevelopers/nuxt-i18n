@@ -69,8 +69,7 @@ function localeRegionPathFactory (i18nPath, routerPath, storePath) {
     }
 
     // Build localized route options
-    // const routesNameSeparator = '<%= options.routesNameSeparator %>'
-    const routesNameSeparator = '___'
+    const routesNameSeparator = '<%= options.routesNameSeparator %>'
     const name = route.name + routesNameSeparator + locale
     const localizedRoute = Object.assign({}, route, { name })
 
