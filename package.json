@@ -1,6 +1,6 @@
 {
   "name": "nuxt-i18n",
-  "version": "4.0.0",
+  "version": "5.4.4",
   "description": "i18n for Nuxt",
   "license": "MIT",
   "contributors": [
@@ -9,6 +9,7 @@
     }
   ],
   "main": "src/index.js",
+  "types": "types/index.d.ts",
   "repository": "https://github.com/nuxt-community/nuxt-i18n",
   "homepage": "https://nuxt-community.github.io/nuxt-i18n/",
   "bugs": {
@@ -19,7 +20,9 @@
   },
   "scripts": {
     "lint": "eslint src test",
-    "test": "jest",
+    "test": "yarn test:fixtures && yarn test:types",
+    "test:fixtures": "jest test/fixtures",
+    "test:types": "tsc -p types/test",
     "release": "standard-version && git push --follow-tags && npm publish",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
@@ -29,39 +32,38 @@
     "src/plugins/*.*"
   ],
   "files": [
-    "src"
+    "src",
+    "types/*.d.ts"
   ],
   "jest": {
     "testEnvironment": "node",
     "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src",
-      "test"
-    ]
+    "collectCoverage": true
   },
   "dependencies": {
-    "acorn": "^5.6.2",
+    "@kazupon/vue-i18n-loader": "^0.3.0",
+    "acorn": "^6.0.2",
+    "acorn-walk": "^6.1.0",
     "cookie": "^0.3.1",
-    "esm": "3.0.28",
-    "fs": "^0.0.1-security",
-    "vue-i18n": "^7.8.0",
-    "vue-i18n-extensions": "^0.1.0"
+    "js-cookie": "^2.2.0",
+    "vue-i18n": "^8.2.1",
+    "vue-i18n-extensions": "^0.2.0"
   },
   "devDependencies": {
-    "codecov": "^3.0.1",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-jest": "^21.15.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.1.0",
+    "codecov": "^3.1.0",
+    "eslint": "^5.7.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^21.26.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^4.3.0",
-    "jest": "^22.3.0",
-    "jsdom": "^11.6.2",
-    "nuxt": "npm:nuxt-edge",
+    "jest": "^23.6.0",
+    "jsdom": "^12.2.0",
+    "nuxt": "^2.2.0",
     "standard-version": "^4.4.0",
-    "vuepress": "0.10.0"
+    "typescript": "^3.1.6",
+    "vuepress": "^0.14.4"
   }
 }

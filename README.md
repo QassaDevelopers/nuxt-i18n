@@ -1,4 +1,4 @@
-<h1 align="center" >nuxt-i18n</h1>
+<h1 align="center">nuxt-i18n</h1>
 <p align="center">i18n features for your Nuxt project</p>
 
 <p align="center">

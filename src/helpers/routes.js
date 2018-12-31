@@ -1,10 +1,10 @@
-import {
+const {
   MODULE_NAME,
-  STRATEGIES } from './constants'
-import { extractComponentOptions } from './components'
-import { getPageOptions, getLocaleCodes } from './utils'
+  STRATEGIES } = require('./constants')
+const { extractComponentOptions } = require('./components')
+const { getPageOptions, getLocaleCodes } = require('./utils')
 
-export const makeRoutes = (baseRoutes, {
+exports.makeRoutes = (baseRoutes, {
   locales,
   defaultLocale,
   routesNameSeparator,
@@ -58,12 +58,17 @@ export const makeRoutes = (baseRoutes, {
 
       // Skip if locale not in module's configuration
       if (locales.indexOf(locale) === -1) {
+        // eslint-disable-next-line
         console.warn(`[${MODULE_NAME}] Can't generate localized route for route '${name}' with locale '${locale}' because locale is not in the module's configuration`)
         continue
       }
 
+      // Make localized route name
+      localizedRoute.name = name + routesNameSeparator + locale
+
       // Generate localized children routes if any
       if (route.children) {
+        delete localizedRoute.name
         localizedRoute.children = []
         for (let i = 0, length1 = route.children.length; i < length1; i++) {
           localizedRoute.children = localizedRoute.children.concat(buildLocalizedRoutes(route.children[i], { locales: [locale] }, true))
@@ -72,11 +77,8 @@ export const makeRoutes = (baseRoutes, {
 
       // Get custom path if any
       if (componentOptions.paths && componentOptions.paths[locale]) {
-        path = componentOptions.paths[locale]
+        path = encodeURI(componentOptions.paths[locale])
       }
-
-      // Make localized route name
-      localizedRoute.name = name + routesNameSeparator + locale
 
       // Add route prefix if needed
       const shouldAddPrefix = (
@@ -87,6 +89,11 @@ export const makeRoutes = (baseRoutes, {
         // Skip default locale if strategy is PREFIX_EXCEPT_DEFAULT
         !(locale === defaultLocale && strategy === STRATEGIES.PREFIX_EXCEPT_DEFAULT)
       )
+
+      if (locale === defaultLocale && strategy === STRATEGIES.PREFIX_AND_DEFAULT) {
+        routes.push({ ...localizedRoute, path })
+      }
+
       if (shouldAddPrefix) {
         path = `/${locale}${path}`
       }

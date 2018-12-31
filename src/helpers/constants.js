@@ -1,24 +1,29 @@
 const packageJson = require('../../package.json')
 
 // Internals
-export const MODULE_NAME = packageJson.name
-export const ROOT_DIR = 'nuxt-i18n'
-export const HELPERS_PATH = 'helpers/'
-export const PLUGINS_DIR = 'plugins/'
-export const TEMPLATES_DIR = 'templates/'
-export const LOCALE_CODE_KEY = 'code'
-export const LOCALE_ISO_KEY = 'iso'
-export const LOCALE_DOMAIN_KEY = 'domain'
-export const LOCALE_FILE_KEY = 'file'
+exports.MODULE_NAME = packageJson.name
+exports.ROOT_DIR = 'nuxt-i18n'
+exports.HELPERS_PATH = 'helpers/'
+exports.PLUGINS_DIR = 'plugins/'
+exports.TEMPLATES_DIR = 'templates/'
+exports.LOCALE_CODE_KEY = 'code'
+exports.LOCALE_ISO_KEY = 'iso'
+exports.LOCALE_DOMAIN_KEY = 'domain'
+exports.LOCALE_FILE_KEY = 'file'
 
 // Options
-export const STRATEGIES = {
+const STRATEGIES = {
   PREFIX: 'prefix',
-  PREFIX_EXCEPT_DEFAULT: 'prefix_except_default'
+  PREFIX_EXCEPT_DEFAULT: 'prefix_except_default',
+  PREFIX_AND_DEFAULT: 'prefix_and_default'
 }
-export const COMPONENT_OPTIONS_KEY = 'nuxtI18n'
-export const DEFAULT_OPTIONS = {
+
+exports.STRATEGIES = STRATEGIES
+
+exports.COMPONENT_OPTIONS_KEY = 'nuxtI18n'
+exports.DEFAULT_OPTIONS = {
   vueI18n: {},
+  vueI18nLoader: false,
   locales: [],
   defaultLocale: null,
   routesNameSeparator: '___',
@@ -28,11 +33,14 @@ export const DEFAULT_OPTIONS = {
   rootRedirect: null,
   detectBrowserLanguage: {
     useCookie: true,
-    cookieKey: 'i18n_redirected'
+    cookieKey: 'i18n_redirected',
+    alwaysRedirect: '',
+    fallbackLocale: null
   },
   differentDomains: false,
   forwardedHost: false,
   seo: true,
+  baseUrl: '',
   vuex: {
     moduleName: 'i18n',
     mutations: {
@@ -45,4 +53,4 @@ export const DEFAULT_OPTIONS = {
   beforeLanguageSwitch: () => null,
   onLanguageSwitched: () => null
 }
-export const NESTED_OPTIONS = ['detectBrowserLanguage', 'vuex']
+exports.NESTED_OPTIONS = ['detectBrowserLanguage', 'vuex']

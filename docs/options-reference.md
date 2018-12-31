@@ -7,6 +7,9 @@ Here are all the options available when configuring the module and their default
   // vue-i18n configuration
   vueI18n: {},
 
+  // If true, vue-i18n-loader is added to Nuxt's Webpack config
+  vueI18nLoader: false,
+
   // List of locales supported by your app
   // This can either be an array of codes: ['en', 'fr', 'es']
   // Or an array of objects for more complex configurations:
@@ -28,6 +31,7 @@ Here are all the options available when configuring the module and their default
   // Routes generation strategy, can be set to one of the following:
   // - 'prefix_except_default': add locale prefix for every locale except default
   // - 'prefix': add locale prefix for every locale
+  // - 'prefix_and_default': add locale prefix for every locale and default
   strategy: 'prefix_except_default',
 
   // Wether or not the translations should be lazy-loaded, if this is enabled,
@@ -51,7 +55,11 @@ Here are all the options available when configuring the module and their default
     // Set to false to redirect every time
     useCookie: true,
     // Cookie name
-    cookieKey: 'i18n_redirected'
+    cookieKey: 'i18n_redirected',
+    // Set to always redirect to value stored in the cookie, not just once
+    alwaysRedirect: false,
+    // If no locale for the browsers locale is a match, use this one as a fallback 
+    fallbackLocale: null
   },
 
   // Set this to true if you're using different domains for each language
@@ -66,6 +74,9 @@ Here are all the options available when configuring the module and their default
   // If true, SEO metadata is generated for routes that have i18n enabled
   // Set to false to disable app-wide
   seo: true,
+
+  // Base URL to use as prefix for alternate URLs in hreflang tags
+  baseUrl: '',
 
   // By default a store module is registered and kept in sync with the
   // app's i18n current state
