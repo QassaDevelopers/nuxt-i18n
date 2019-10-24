@@ -1,11 +1,14 @@
 {
   "name": "nuxt-i18n",
-  "version": "5.4.4",
+  "version": "6.3.0",
   "description": "i18n for Nuxt",
   "license": "MIT",
   "contributors": [
     {
       "name": "Paul Gascou-Vaillancourt (@paulgv)"
+    },
+    {
+      "name": "Rafal Chlodnicki (@rchl)"
     }
   ],
   "main": "src/index.js",
@@ -19,17 +22,21 @@
     "access": "public"
   },
   "scripts": {
+    "dev:basic": "nuxt -c ./test/fixture/basic/nuxt.config.js",
+    "coverage": "codecov",
     "lint": "eslint src test",
-    "test": "yarn test:fixtures && yarn test:types",
-    "test:fixtures": "jest test/fixtures",
+    "test": "yarn test:types && yarn test:unit && yarn test:e2e-ssr && yarn test:e2e-browser",
+    "test:e2e-ssr": "jest test/module.test",
+    "test:e2e-browser": "jest test/browser.test",
+    "test:unit": "jest test/unit.test",
     "test:types": "tsc -p types/test",
     "release": "standard-version && git push --follow-tags && npm publish",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
   },
   "eslintIgnore": [
-    "src/templates/*.*",
-    "src/plugins/*.*"
+    "src/templates/options.js",
+    "**/*.d.ts"
   ],
   "files": [
     "src",
@@ -37,33 +44,58 @@
   ],
   "jest": {
     "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./test/setup"
+    ],
     "coverageDirectory": "./coverage/",
-    "collectCoverage": true
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/templates/*.js",
+      "!src/plugins/*.js",
+      "!src/helpers/utils.js",
+      "!src/helpers/constants.js"
+    ]
   },
   "dependencies": {
-    "@kazupon/vue-i18n-loader": "^0.3.0",
-    "acorn": "^6.0.2",
-    "acorn-walk": "^6.1.0",
-    "cookie": "^0.3.1",
+    "@babel/parser": "^7.5.5",
+    "@babel/traverse": "^7.5.5",
+    "@kazupon/vue-i18n-loader": "^0.4.0",
+    "cookie": "^0.4.0",
+    "is-https": "^1.0.0",
     "js-cookie": "^2.2.0",
-    "vue-i18n": "^8.2.1",
-    "vue-i18n-extensions": "^0.2.0"
+    "vue-i18n": "^8.12.0",
+    "vue-i18n-extensions": "^0.2.1"
   },
   "devDependencies": {
-    "codecov": "^3.1.0",
-    "eslint": "^5.7.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jest": "^21.26.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^4.3.0",
-    "jest": "^23.6.0",
-    "jsdom": "^12.2.0",
-    "nuxt": "^2.2.0",
-    "standard-version": "^4.4.0",
-    "typescript": "^3.1.6",
-    "vuepress": "^0.14.4"
+    "@babel/core": "7.6.4",
+    "@babel/plugin-syntax-dynamic-import": "7.2.0",
+    "@babel/preset-env": "7.6.3",
+    "@babel/runtime": "7.6.3",
+    "@nuxt/types": "0.3.2",
+    "@nuxtjs/module-test-utils": "1.4.0",
+    "@types/jest": "24.0.19",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-plugin-dynamic-import-node": "2.3.0",
+    "chromedriver": "77.0.0",
+    "codecov": "3.6.1",
+    "eslint": "6.5.1",
+    "eslint-config-standard": "14.1.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-jest": "22.20.0",
+    "eslint-plugin-node": "10.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "eslint-plugin-vue": "5.2.3",
+    "geckodriver": "1.19.0",
+    "jest": "24.9.0",
+    "jsdom": "15.2.0",
+    "nuxt": "2.10.2",
+    "puppeteer-core": "1.20.0",
+    "selenium-webdriver": "4.0.0-alpha.5",
+    "standard-version": "7.0.0",
+    "tib": "0.7.2",
+    "typescript": "3.6.4",
+    "vuepress": "1.2.0"
   }
 }

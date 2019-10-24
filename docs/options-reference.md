@@ -18,6 +18,9 @@ Here are all the options available when configuring the module and their default
   //   { code: 'fr', iso: 'fr-FR', file: 'fr.js' },
   //   { code: 'es', iso: 'es-ES', file: 'es.js' }
   // ]
+  //   `iso` value should have either:
+  //   - code of ISO 639-1 (e.g. 'en')
+  //   - code of ISO 639-1 and code of ISO 3166-1 alpha-2, with a hyphen (e.g. 'en-US')
   locales: [],
 
   // The app's default locale, URLs for this locale won't have a prefix if
@@ -28,7 +31,12 @@ Here are all the options available when configuring the module and their default
   // need to change this
   routesNameSeparator: '___',
 
+  // Suffix added to generated routes name for default locale if strategy is prefix_and_default,
+  // you shouldn't need to change this
+  defaultLocaleRouteNameSuffix: 'default',
+
   // Routes generation strategy, can be set to one of the following:
+  // - 'no_prefix': routes won't be prefixed
   // - 'prefix_except_default': add locale prefix for every locale except default
   // - 'prefix': add locale prefix for every locale
   // - 'prefix_and_default': add locale prefix for every locale and default
@@ -58,7 +66,7 @@ Here are all the options available when configuring the module and their default
     cookieKey: 'i18n_redirected',
     // Set to always redirect to value stored in the cookie, not just once
     alwaysRedirect: false,
-    // If no locale for the browsers locale is a match, use this one as a fallback 
+    // If no locale for the browsers locale is a match, use this one as a fallback
     fallbackLocale: null
   },
 
@@ -71,11 +79,15 @@ Here are all the options available when configuring the module and their default
   // HTTP header instead of window.location
   forwardedHost: false,
 
-  // If true, SEO metadata is generated for routes that have i18n enabled
-  // Set to false to disable app-wide
-  seo: true,
+  // If true, SEO metadata is generated for routes that have i18n enabled.
+  // Note that performance can suffer with this enabled and there might be compatibility
+  // issues with some plugins. Recommended way is to set up SEO as described in:
+  // https://nuxt-community.github.io/nuxt-i18n/seo.html#improving-performance
+  seo: false,
 
-  // Base URL to use as prefix for alternate URLs in hreflang tags
+  // Fallback base URL to use as prefix for alternate URLs in hreflang tags.
+  // By default VueRouter's base URL will be used and only if that is not available,
+  // fallback URL will be used.
   baseUrl: '',
 
   // By default a store module is registered and kept in sync with the
@@ -84,18 +96,18 @@ Here are all the options available when configuring the module and their default
   vuex: {
     // Module namespace
     moduleName: 'i18n',
-    
-    // Mutations config
-    mutations: {
-      // Mutation to commit to store current locale, set to false to disable
-      setLocale: 'I18N_SET_LOCALE',
 
-      // Mutation to commit to store current message, set to false to disable
-      setMessages: 'I18N_SET_MESSAGES'
-    }
+    // If enabled, current app's locale is synced with nuxt-i18n store module
+    syncLocale: false,
+
+    // If enabled, current translation messages are synced with nuxt-i18n store module
+    syncMessages: false,
+
+    // Mutation to commit to set route parameters translations
+    syncRouteParams: true
   },
 
-  // By default, custom routes are extracted from page files using acorn parsing,
+  // By default, custom routes are extracted from page files using babel parser,
   // set this to false to disable this
   parsePages: true,
 
@@ -103,10 +115,16 @@ Here are all the options available when configuring the module and their default
   // the pages option, refer to the "Routing" section for usage
   pages: {},
 
+  // By default, custom paths will be encoded using encodeURI method.
+  // This does not work with regexp: "/foo/:slug-:id(\\d+)". If you want to use
+  // regexp in the path, then set this option to false, and make sure you process
+  // path encoding yourself.
+  encodePaths: true,
+
   // Called right before app's locale changes
-  beforeLanguageSwitch: () => null,
+  beforeLanguageSwitch: (oldLocale, newLocale) => null,
 
   // Called after app's locale has changed
-  onLanguageSwitched: () => null
+  onLanguageSwitched: (oldLocale, newLocale) => null
 }
 ```

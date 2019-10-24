@@ -1,6 +1,6 @@
 const {
-  MODULE_NAME,
-  STRATEGIES } = require('./constants')
+  STRATEGIES
+} = require('./constants')
 const { extractComponentOptions } = require('./components')
 const { getPageOptions, getLocaleCodes } = require('./utils')
 
@@ -8,24 +8,31 @@ exports.makeRoutes = (baseRoutes, {
   locales,
   defaultLocale,
   routesNameSeparator,
+  defaultLocaleRouteNameSuffix,
   strategy,
   parsePages,
   pages,
+  encodePaths,
   pagesDir,
   differentDomains
 }) => {
   locales = getLocaleCodes(locales)
   let localizedRoutes = []
 
-  const buildLocalizedRoutes = (route, routeOptions = {}, isChild = false) => {
+  const buildLocalizedRoutes = (route, routeOptions = {}, isChild = false, isExtraRouteTree = false) => {
     const routes = []
     let pageOptions
+
+    // Skip route if it is only a redirect without a component.
+    if (route.redirect && !route.component) {
+      return route
+    }
 
     // Extract i18n options from page
     if (parsePages) {
       pageOptions = extractComponentOptions(route.component)
     } else {
-      pageOptions = getPageOptions(route, pages, locales, pagesDir)
+      pageOptions = getPageOptions(route, pages, locales, pagesDir, defaultLocale)
     }
 
     // Skip route if i18n is disabled on page
@@ -53,46 +60,65 @@ exports.makeRoutes = (baseRoutes, {
     // Generate routes for component's supported locales
     for (let i = 0, length1 = componentOptions.locales.length; i < length1; i++) {
       const locale = componentOptions.locales[i]
-      let { name, path } = route
+      const { name } = route
+      let { path } = route
       const localizedRoute = { ...route }
 
-      // Skip if locale not in module's configuration
-      if (locales.indexOf(locale) === -1) {
-        // eslint-disable-next-line
-        console.warn(`[${MODULE_NAME}] Can't generate localized route for route '${name}' with locale '${locale}' because locale is not in the module's configuration`)
-        continue
+      // Make localized route name. Name might not exist on parent route if child has same path.
+      if (name) {
+        localizedRoute.name = name + routesNameSeparator + locale
       }
-
-      // Make localized route name
-      localizedRoute.name = name + routesNameSeparator + locale
 
       // Generate localized children routes if any
       if (route.children) {
-        delete localizedRoute.name
         localizedRoute.children = []
         for (let i = 0, length1 = route.children.length; i < length1; i++) {
-          localizedRoute.children = localizedRoute.children.concat(buildLocalizedRoutes(route.children[i], { locales: [locale] }, true))
+          localizedRoute.children = localizedRoute.children.concat(buildLocalizedRoutes(route.children[i], { locales: [locale] }, true, isExtraRouteTree))
         }
       }
 
       // Get custom path if any
       if (componentOptions.paths && componentOptions.paths[locale]) {
-        path = encodeURI(componentOptions.paths[locale])
+        path = encodePaths ? encodeURI(componentOptions.paths[locale]) : componentOptions.paths[locale]
       }
+
+      // For PREFIX_AND_DEFAULT strategy and default locale:
+      // - if it's a parent route, add it with default locale suffix added (no suffix if route has children)
+      // - if it's a child route of that extra parent route, append default suffix to it
+      if (locale === defaultLocale && strategy === STRATEGIES.PREFIX_AND_DEFAULT) {
+        if (!isChild) {
+          const defaultRoute = { ...localizedRoute, path }
+
+          if (name) {
+            defaultRoute.name = localizedRoute.name + routesNameSeparator + defaultLocaleRouteNameSuffix
+          }
+
+          if (defaultRoute.children) {
+            // Recreate child routes with default suffix added
+            defaultRoute.children = []
+            for (const childRoute of route.children) {
+              // isExtraRouteTree argument is true to indicate that this is extra route added for PREFIX_AND_DEFAULT strategy
+              defaultRoute.children = defaultRoute.children.concat(buildLocalizedRoutes(childRoute, { locales: [locale] }, true, true))
+            }
+          }
+
+          routes.push(defaultRoute)
+        } else if (isChild && isExtraRouteTree && name) {
+          localizedRoute.name += routesNameSeparator + defaultLocaleRouteNameSuffix
+        }
+      }
+
+      const isChildWithRelativePath = isChild && !path.startsWith('/')
 
       // Add route prefix if needed
       const shouldAddPrefix = (
         // No prefix if app uses different locale domains
         !differentDomains &&
-        // Only add prefix on top level routes
-        !isChild &&
+        // No need to add prefix if child's path is relative
+        !isChildWithRelativePath &&
         // Skip default locale if strategy is PREFIX_EXCEPT_DEFAULT
         !(locale === defaultLocale && strategy === STRATEGIES.PREFIX_EXCEPT_DEFAULT)
       )
-
-      if (locale === defaultLocale && strategy === STRATEGIES.PREFIX_AND_DEFAULT) {
-        routes.push({ ...localizedRoute, path })
-      }
 
       if (shouldAddPrefix) {
         path = `/${locale}${path}`

@@ -15,7 +15,8 @@ exports.LOCALE_FILE_KEY = 'file'
 const STRATEGIES = {
   PREFIX: 'prefix',
   PREFIX_EXCEPT_DEFAULT: 'prefix_except_default',
-  PREFIX_AND_DEFAULT: 'prefix_and_default'
+  PREFIX_AND_DEFAULT: 'prefix_and_default',
+  NO_PREFIX: 'no_prefix'
 }
 
 exports.STRATEGIES = STRATEGIES
@@ -27,6 +28,7 @@ exports.DEFAULT_OPTIONS = {
   locales: [],
   defaultLocale: null,
   routesNameSeparator: '___',
+  defaultLocaleRouteNameSuffix: 'default',
   strategy: STRATEGIES.PREFIX_EXCEPT_DEFAULT,
   lazy: false,
   langDir: null,
@@ -34,22 +36,22 @@ exports.DEFAULT_OPTIONS = {
   detectBrowserLanguage: {
     useCookie: true,
     cookieKey: 'i18n_redirected',
-    alwaysRedirect: '',
+    alwaysRedirect: false,
     fallbackLocale: null
   },
   differentDomains: false,
   forwardedHost: false,
-  seo: true,
+  seo: false,
   baseUrl: '',
   vuex: {
     moduleName: 'i18n',
-    mutations: {
-      setLocale: 'I18N_SET_LOCALE',
-      setMessages: 'I18N_SET_MESSAGES'
-    }
+    syncLocale: false,
+    syncMessages: false,
+    syncRouteParams: true
   },
   parsePages: true,
   pages: {},
+  encodePaths: true,
   beforeLanguageSwitch: () => null,
   onLanguageSwitched: () => null
 }

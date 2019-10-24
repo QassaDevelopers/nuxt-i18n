@@ -1,8 +1,8 @@
 <template>
 <div>
   <LangSwitcher />
-  {{ $t('about') }}
-  <nuxt-link exact :to="localePath('index')">{{ $t('home') }}</nuxt-link>
+  <h1>{{ $t('posts') }}</h1>
+  <router-view></router-view>
 </div>
 </template>
 
@@ -15,8 +15,7 @@ export default {
   },
   nuxtI18n: {
     paths: {
-      en: '/about-us',
-      fr: '/a-propos'
+      fr: '/articles'
     }
   }
 }

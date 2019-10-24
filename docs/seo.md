@@ -1,10 +1,12 @@
 # SEO
 
-By default, **nuxt-i18n** attempts to add some metadata to improve your pages SEO. Here's what it does:
+With `seo` option enabled, **nuxt-i18n** attempts to add some metadata to improve your pages SEO. Here's what it does:
 
 * Add a _lang_ attribute containing current locale's ISO code to the `<html>` tag.
 * Generate `<link rel="alternate" hreflang="x">` tags for every language configured in `nuxt.config.js`. For each language, the ISO code is used as `hreflang` attribute's value. [More on hreflang](https://support.google.com/webmasters/answer/189077)
 * Generate `og:locale` and `og:locale:alternate` meta tags as defined in the [Open Graph protocol](http://ogp.me/#optional)
+* When using `prefix_and_default` strategy, generate `rel="canonical"` link on the default language routes containing the
+prefix to avoid duplicate indexation. [More on canonical](https://support.google.com/webmasters/answer/182192#dup-content)
 
 
 For this feature to work, you must configure `locales` option as an array of objects, where each object has an `iso` option set to the language ISO code:
@@ -41,13 +43,13 @@ You should also set the `baseUrl` option to your production domain in order to m
 ```
 
 
-To disable this feature everywhere in your app, set `seo` option to `false`:
+To enable this feature everywhere in your app, set `seo` option to `true`:
 
 ```js
 // nuxt.config.js
 
 ['nuxt-i18n', {
-  seo: false
+  seo: true
 }]
 ```
 
@@ -63,7 +65,7 @@ export default {
 }
 ```
 
-To override SEO metadata for any page, simply declare your own `head ()` method. Have a look at [src/plugins/seo.js](/src/plugins/seo.js) if you want to copy some of **nuxt-i18n**'s logic.
+To override SEO metadata for any page, simply declare your own `head ()` method. Have a look at [src/templates/seo-head.js](https://github.com/nuxt-community/nuxt-i18n/blob/master/src/templates/seo-head.js) if you want to copy some of **nuxt-i18n**'s logic.
 
 ## Improving performance
 
@@ -74,7 +76,7 @@ This means each time a component is created, the SEO metadata is recomputed for 
 To improve performance you can use the `$nuxtI18nSeo` method in your layout instead.
 It will generate i18n SEO metadata for the current context.
 
-First you need to disable automatic SEO by setting `seo` to `false` in your configuration:
+First make sure automatic SEO is disabled by setting `seo` to `false` in your configuration or removing that option completely:
 
 ```js
 // nuxt.config.js
